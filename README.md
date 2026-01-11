@@ -1,249 +1,226 @@
 # Fraud_Transaction_Detection
-🚨 Fraud Transaction Detection Using Machine Learning
-📌 Project Overview
 
-This project focuses on detecting fraudulent financial transactions using machine learning models on a large-scale synthetic dataset. The goal is to build, evaluate, and compare multiple tree-based models that are commonly used in real-world fraud detection systems.
+# 🚨 Fraud Transaction Detection Using Machine Learning
 
-The project emphasizes:
+## 📌 Project Overview
 
-Robust data preprocessing
+This project focuses on detecting fraudulent financial transactions using machine learning models on a **large-scale synthetic dataset**. The objective is to design an end-to-end fraud detection pipeline that includes **data preprocessing, feature engineering, class imbalance handling, and model comparison** using industry-standard algorithms.
 
-Memory-efficient feature engineering
+The project demonstrates practical skills required in real-world fraud detection systems, including memory-efficient processing and model evaluation on highly imbalanced data.
 
-Handling high-cardinality categorical features
+---
 
-Addressing severe class imbalance
+## 📂 Repository Structure
 
-Comparing XGBoost, LightGBM, and CatBoost
-
-All steps are implemented in Jupyter Notebooks, structured for clarity and reproducibility.
-
-📂 Repository Structure
 ├── fraud_trans_dete_preprocessing.ipynb
 ├── fraud_trans_dete_xg_light.ipynb
 ├── fraud_trans_dete_catboost.ipynb
 ├── README.md
 
 
-📁 Dataset
-The dataset is stored on Google Drive due to its large size (~1GB).
+📁 **Dataset**  
+Due to the large size (~1GB), the dataset is hosted on **Google Drive**.  
 A download link is provided in this repository.
 
-🧠 Dataset Description
+---
 
-Synthetic transaction dataset
+## 🧠 Dataset Description
 
-Millions of rows
+- Synthetic financial transaction dataset
+- Millions of transaction records
+- Highly imbalanced target variable (`is_fraud`)
+- Includes:
+  - Transaction metadata
+  - Merchant information
+  - Device and channel details
+  - Velocity-based behavioral features
 
-Highly imbalanced target variable (is_fraud)
+---
 
-Includes:
+## 🔧 1. Data Preprocessing & Feature Engineering  
+**Notebook:** `fraud_trans_dete_preprocessing.ipynb`
 
-Transaction metadata
+### 🔹 Data Cleaning & Validation
 
-Merchant information
+- Removed duplicate transactions using `transaction_id`
+- Checked for missing values and invalid amounts
+- Identified logical inconsistencies (e.g., `card_present = yes` but channel ≠ POS)
+- Verified distributions of all categorical variables
 
-Device & channel details
+---
 
-Velocity-based behavioral features
+### 🔹 Feature Reduction
 
-🔧 1. Data Preprocessing & Feature Engineering
+Removed identifier and leakage-prone columns such as:
+- `transaction_id`
+- `customer_id`
+- `card_number`
+- `ip_address`
+- `timestamp`
+- `device_fingerprint`
 
-Notebook: fraud_trans_dete_preprocessing.ipynb
+This ensures models learn **behavioral patterns**, not unique identities.
 
-🔹 Key Steps
-1️⃣ Initial Data Cleaning
+---
 
-Removed duplicate transactions using transaction_id
+### 🚀 Velocity Feature Engineering
 
-Checked for:
+The `velocity_last_hour` column contained dictionary-like behavioral summaries.  
+It was decomposed into the following numerical features:
 
-Missing values
+- `num_transactions`
+- `total_amount`
+- `unique_merchants`
+- `unique_countries`
+- `max_single_amount`
 
-Invalid transaction amounts
+These features capture short-term transactional behavior and significantly improve fraud detection performance.
 
-Logical inconsistencies (e.g., card_present = yes but channel ≠ POS)
+---
 
-2️⃣ Exploratory Validation
+### 🔄 Encoding Strategy
 
-Examined value distributions of all categorical features
+To support different modeling approaches, **two separate datasets** were created:
 
-Ensured consistency across transaction attributes
+#### 🔹 XGBoost & LightGBM Dataset
+- **Target Encoding**
+  - Applied to high-cardinality features:
+    - `merchant`
+    - `merchant_type`
+- **Label Encoding**
+  - Applied to remaining categorical variables
+- Train-test split with stratification
+- Saved as:
+  - `fraud_data_lgbm_xgb_train.csv`
+  - `fraud_data_lgbm_xgb_test.csv`
 
-3️⃣ Feature Reduction
+#### 🔹 CatBoost Dataset
+- No manual encoding applied
+- Raw categorical features preserved
+- Saved as:
+  - `fraud_data_catboost.csv`
 
-Removed identifiers and leakage-prone columns such as:
+This design ensures optimal performance and memory efficiency for each model.
 
-transaction_id
+---
 
-customer_id
+## 🤖 2. XGBoost & LightGBM Modeling  
+**Notebook:** `fraud_trans_dete_xg_light.ipynb`
 
-card_number
+### 🔹 Models Used
+- **XGBoost**
+- **LightGBM**
 
-ip_address
+Both models are widely used in production fraud detection systems due to their performance on tabular data.
 
-timestamp
+---
 
-This ensures models learn behavioral patterns, not identities.
+### ⚖️ Handling Class Imbalance
 
-🚀 Velocity Feature Engineering
+Fraud detection datasets are extremely imbalanced.  
+This was addressed using:
 
-The column velocity_last_hour contained dictionary-like behavioral summaries.
-These were safely extracted into numerical features:
+- **XGBoost:** `scale_pos_weight`
+- **LightGBM:** `class_weight = 'balanced'`
 
-num_transactions
+---
 
-total_amount
+### 📊 Evaluation Metrics
 
-unique_merchants
+Each model is evaluated using:
+- Confusion Matrix
+- Precision, Recall, F1-score
+- ROC-AUC score
+- ROC Curve visualization
 
-unique_countries
+ROC-AUC is emphasized due to its robustness on imbalanced datasets.
 
-max_single_amount
+---
 
-This step significantly improves fraud detection performance by capturing short-term behavioral risk.
+### 🏆 Results
 
-🔄 Encoding Strategy (Critical Design Choice)
+#### XGBoost
+- ROC-AUC: **0.9956**
+- Fraud Recall: **0.97**
 
-To support different model architectures, two separate datasets were created:
+#### LightGBM
+- ROC-AUC: **0.9940**
+- Fraud Recall: **0.96**
 
-🔹 For XGBoost & LightGBM
+XGBoost achieved the best overall performance, particularly in identifying fraudulent transactions.
 
-Target Encoding
+---
 
-Applied to high-cardinality features:
+## 🐱 3. CatBoost Modeling  
+**Notebook:** `fraud_trans_dete_catboost.ipynb`
 
-merchant
+### 🔹 Why CatBoost?
+- Native categorical feature handling
+- Prevents target leakage using ordered boosting
+- Minimal preprocessing required
 
-merchant_type
+---
 
-Label Encoding
+### ⚙️ Implementation Details
 
-Applied to remaining categorical variables
+- Raw categorical features passed directly via `cat_features`
+- Class imbalance handled using `scale_pos_weight`
+- Early stopping applied to prevent overfitting
 
-Saved as:
+---
 
-fraud_data_lgbm_xgb_train.csv
+### 📈 CatBoost Results
 
-fraud_data_lgbm_xgb_test.csv
+- ROC-AUC: **0.9941**
+- Performance comparable to LightGBM
+- Slightly below XGBoost due to dominance of engineered numerical features
 
-🔹 For CatBoost
+---
 
-No manual encoding
+## 🧪 Final Model Comparison
 
-Raw categorical columns preserved
+| Model     | ROC-AUC |
+|-----------|--------|
+| XGBoost   | **0.9956** |
+| LightGBM  | 0.9940 |
+| CatBoost  | 0.9941 |
 
-Saved as:
+---
 
-fraud_data_catboost.csv
+## 🎯 Key Takeaways
 
-This separation avoids unnecessary memory usage and ensures each model uses its optimal input format.
+- Velocity-based behavioral features are critical for fraud detection
+- Encoding strategy must align with the chosen model
+- Proper class imbalance handling significantly improves recall
+- XGBoost delivered the strongest overall performance
+- The pipeline is scalable and production-oriented
 
-🤖 2. XGBoost & LightGBM Modeling
+---
 
-Notebook: fraud_trans_dete_xg_light.ipynb
+## 📌 Skills Demonstrated
 
-🔹 Why These Models?
+- Large-scale data preprocessing
+- Feature engineering for fraud detection
+- Handling highly imbalanced datasets
+- Model comparison and evaluation
+- Memory-efficient machine learning workflows
 
-Industry-standard for tabular fraud detection
+---
 
-Excellent handling of nonlinear interactions
+## 🚀 Future Improvements
 
-Scalable to millions of rows
+- Precision-Recall curve analysis
+- Cost-sensitive threshold tuning
+- Model explainability using SHAP
+- Time-based cross-validation
 
-⚖️ Handling Class Imbalance
+---
 
-Fraud is rare → incorrect handling leads to biased models.
+## 📎 Dataset Access
 
-Solutions used:
+Due to size constraints, the dataset is hosted externally.  
+📥 **Download link is provided in this repository**
 
-XGBoost: scale_pos_weight
+---
 
-LightGBM: class_weight='balanced'
-
-📊 Evaluation Metrics
-
-Models are evaluated using:
-
-Confusion Matrix
-
-Precision, Recall, F1-score
-
-ROC-AUC
-
-ROC Curve visualization
-
-ROC-AUC is emphasized since it reflects ranking quality in imbalanced datasets.
-
-🏆 Results Summary
-Model	ROC-AUC	Fraud Recall
-XGBoost	0.9956	0.97
-LightGBM	0.9940	0.96
-
-XGBoost achieved the best overall performance, especially in identifying fraudulent transactions.
-
-🐱 3. CatBoost Modeling
-
-Notebook: fraud_trans_dete_catboost.ipynb
-
-🔹 Why CatBoost?
-
-Native categorical feature handling
-
-Avoids target leakage via ordered boosting
-
-Strong performance with minimal preprocessing
-
-⚙️ Key Implementation Details
-
-Raw categorical features passed directly using cat_features
-
-scale_pos_weight used for class imbalance
-
-Early stopping applied to prevent overfitting
-
-📈 CatBoost Results
-
-ROC-AUC: 0.9941
-
-Performance comparable to LightGBM
-
-Slightly below XGBoost due to dominance of numerical velocity features
-
-🧪 Final Model Comparison
-Model	Strength
-XGBoost	Best overall detection & ranking
-LightGBM	Fast training & scalable
-CatBoost	Clean handling of categorical data
-🎯 Key Takeaways
-
-Velocity features are extremely powerful for fraud detection
-
-Encoding strategy must align with the chosen model
-
-High ROC-AUC confirms strong discrimination capability
-
-The pipeline is memory-aware, scalable, and production-aligned
-
-📌 Skills Demonstrated
-
-✔ Large-scale data processing
-✔ Feature engineering for fraud detection
-✔ Handling imbalanced datasets
-✔ Model comparison & evaluation
-✔ Memory-efficient ML pipelines
-
-🚀 Future Improvements
-
-Precision-Recall curve analysis
-
-Cost-sensitive threshold optimization
-
-SHAP-based explainability
-
-Time-based validation split
-
-📎 Dataset Access
-
-Due to size constraints, the dataset is hosted on Google Drive.
-📥 [Download Link – Provided in Repository]
+⭐ If you found this project useful, feel free to star the repository!
