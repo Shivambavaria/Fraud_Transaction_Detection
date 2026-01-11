@@ -17,7 +17,7 @@ The project demonstrates practical skills required in real-world fraud detection
 
 
 📁 **Dataset**  
-Due to the large size (~1GB), the dataset is hosted on **Google Drive**.  
+Due to the large size, the dataset is hosted on **Google Drive**.  
 A download link is provided in this repository.
 
 ---
