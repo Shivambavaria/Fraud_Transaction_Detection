@@ -1,6 +1,4 @@
-# Fraud_Transaction_Detection
-
-# 🚨 Fraud Transaction Detection Using Machine Learning
+# 🚨 Fraud Transaction Detection
 
 ## 📌 Project Overview
 
