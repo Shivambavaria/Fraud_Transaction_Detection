@@ -12,10 +12,10 @@ The project demonstrates practical skills required in real-world fraud detection
 
 ## 📂 Repository Structure
 
-├── fraud_trans_dete_preprocessing.ipynb
-├── fraud_trans_dete_xg_light.ipynb
-├── fraud_trans_dete_catboost.ipynb
-├── README.md
+├── fraud_trans_dete_preprocessing.ipynb  
+├── fraud_trans_dete_xg_light.ipynb  
+├── fraud_trans_dete_catboost.ipynb  
+├── README.md  
 
 
 📁 **Dataset**  
