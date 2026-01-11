@@ -25,7 +25,7 @@ A download link is provided in this repository.
 ## 🧠 Dataset Description
 
 - Synthetic financial transaction dataset
-- 7.4 millions transaction records
+- 7.4 million transaction records
 - Highly imbalanced target variable (`is_fraud`)
 - Includes:
   - Transaction metadata
