@@ -25,7 +25,7 @@ A download link is provided in this repository.
 ## 🧠 Dataset Description
 
 - Synthetic financial transaction dataset
-- Millions of transaction records
+- 7.4 millions transaction records
 - Highly imbalanced target variable (`is_fraud`)
 - Includes:
   - Transaction metadata
@@ -217,7 +217,8 @@ XGBoost achieved the best overall performance, particularly in identifying fraud
 ## 📎 Dataset Access
 
 Due to size constraints, the dataset is hosted externally.  
-📥 **Download link is provided in this repository**
+📥 **Download Dataset:**  
+https://drive.google.com/file/d/1oV0gDsgLzXwKIxv156sear_PWMPhOnDi/view?usp=drive_link
 
 ---
 
